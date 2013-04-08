@@ -24,4 +24,7 @@ create table player_all(id int PRIMARY KEY,name char(255),shirtname char(255),ja
                        weak_foot_frequency tinyint,goalkeeping_skills tinyint,response tinyint,explosive_power tinyint,dribble_speed tinyint,top_speed tinyint,
                        body_balance tinyint,stamina tinyint,kicking_power tinyint,jump tinyint,injury char(255),tenacity tinyint,teamwork tinyint,attack_awareness tinyint,
                        defence_awareness tinyint);
+                       
+create table team();
+
 commit;

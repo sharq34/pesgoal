@@ -3,7 +3,7 @@ package com.edisonyang.pesgoal.data.bo;
 public class Player {
 
 	// «Ú‘±ID
-	private int index;
+	private int playerId;
 
 	private String name;
 
@@ -53,12 +53,13 @@ public class Player {
 
 	private PlayerStyle playerStyle;
 
-	public int getIndex() {
-		return index;
+
+	public int getPlayerId() {
+		return playerId;
 	}
 
-	public void setIndex(int index) {
-		this.index = index;
+	public void setPlayerId(int playerId) {
+		this.playerId = playerId;
 	}
 
 	public String getName() {
@@ -255,7 +256,7 @@ public class Player {
 
 	@Override
 	public String toString() {
-		return "Player [index=" + index + ", name=" + name + ", shirtName="
+		return "Player [playerId=" + playerId + ", name=" + name + ", shirtName="
 				+ shirtName + ", spacing=" + spacing + ", commentary="
 				+ commentary + ", age=" + age + ", nationality=" + nationality
 				+ ", foot=" + foot + ", weight=" + weight + ", height="
