@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -13,7 +15,6 @@ import com.edisonyang.pesgoal.data.bo.Player;
 import com.edisonyang.pesgoal.data.bo.PlayerStyle;
 import com.edisonyang.pesgoal.data.bo.Speed;
 import com.edisonyang.pesgoal.data.bo.Team;
-import com.edisonyang.pesgoal.data.bo.TeamMember;
 import com.edisonyang.pesgoal.data.bo.Technique;
 import com.edisonyang.pesgoal.data.bo.WillPower;
 import com.edisonyang.pesgoal.util.CommonUtil;
@@ -56,15 +57,32 @@ public class CSVHandler implements IDataHandler {
 			String record = playerReader.readLine();
 
 			while (!CommonUtil.verifyNull(record)) {
+
 				Player player = new Player();
 				String[] prop = record.split("\\,");
-
-				player.setPlayerId(Integer.parseInt(prop[0]));
-				player.setName(prop[1]);
+				int id=Integer.parseInt(prop[0]);
+				if(id==0){
+					record = playerReader.readLine();
+					continue;
+				}
+				player.setPlayerId(id);
+				
+				String name=prop[1];
+				if(name==null||"".equals(name)||name.indexOf("unname")!=-1){
+					record = playerReader.readLine();
+					continue;
+				}
+				player.setName(name);
 				player.setShirtName(prop[2]);
 				player.setSpacing(prop[4]);
 				player.setCommentary(prop[5]);
 				player.setAge(Byte.valueOf(prop[6]));
+				
+				String nationality=prop[7];
+				if(nationality==null||"".equals(nationality)||nationality.indexOf("Free Nationality")!=-1){
+					record = playerReader.readLine();
+					continue;
+				}
 				player.setNationality(prop[7]);
 				player.setFoot(prop[8]);
 				player.setWeight(Integer.parseInt(prop[9]));
@@ -345,9 +363,7 @@ public class CSVHandler implements IDataHandler {
 				record = playerReader.readLine();
 			}
 			
-			logger.debug("之前：" + players.size());
-			afterReadPlayer(players);
-			logger.debug("之后：" + players.size());
+			logger.info("一共：" + players.size()+" 球员信息。");
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -364,28 +380,6 @@ public class CSVHandler implements IDataHandler {
 		return players;
 	}
 
-	/**
-	 * 球员信息后期处理，删除假人。
-	 * 
-	 * @param players
-	 */
-	private void afterReadPlayer(List<Player> players) {
-		for (int i = 0; i < players.size(); i++) {
-			Player p = players.get(i);
-			int index = p.getPlayerId();
-			if (index == 0) {
-				players.remove(i);
-				continue;
-			}
-			String name = p.getName();
-			if (name == null || name.equals("DUMMY")
-					|| name.indexOf("unnamed") == -1) {
-				players.remove(i);
-				continue;
-			}
-		}
-	}
-
 	public List<Team> readTeam() {
 		
 		FileReader fileReader = null;
@@ -399,37 +393,33 @@ public class CSVHandler implements IDataHandler {
 			String first = teamReader.readLine();
 			if (CommonUtil.verifyNull(first))
 				return null;
-			//test
-//			String[] props=first.split("\\,");
-//			for(int i=0;i<props.length;i++){
-//				if(props[i].equals("TEAMNAME 1"))
-//					logger.debug(i);
-//			}
 
 			String record = teamReader.readLine();
-
+			int teamId=1;
 			while (!CommonUtil.verifyNull(record)) {
 				Team team = new Team();
 				String[] prop = record.split("\\,");
+				team.setTeamId(teamId++);
 				team.setTeamName(prop[0]);
 				team.setShortName(prop[1]);
 				team.setStadium(Integer.parseInt(prop[2]));
 				team.setChantsSlot(Byte.valueOf(prop[3]));
 				team.setFlagSlot(Integer.parseInt(prop[4]));
 				
-				List<TeamMember> members=new ArrayList<TeamMember>();
+				Map<Byte, String> member=new HashMap<Byte, String>();
 				for(int i=5;i<69;i++){
-					TeamMember mem=new TeamMember();
 					String name=prop[i++];
-					int number=Integer.parseInt(prop[i]);
+					Integer number=Integer.parseInt(prop[i]);
 					if(name==null||"".equals(name)||number==255){
 						continue;
 					}
-					mem.setName(name);
-					mem.setNumber(number);
-					members.add(mem);
+					if(!member.containsKey(number.byteValue())){
+						member.put(number.byteValue(), name);
+					}else{
+						logger.error("数据处理错误，出现相同号码： "+number);
+					}
 				}
-				team.setMember(members);
+				team.setMember(member);
 				team.setLongFK(Byte.valueOf(prop[69]));
 				team.setShortFK(Byte.valueOf(prop[70]));
 				team.setFK2(Byte.valueOf(prop[71]));
@@ -441,7 +431,7 @@ public class CSVHandler implements IDataHandler {
 				teams.add(team);
 				record = teamReader.readLine();
 			}
-
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -454,7 +444,7 @@ public class CSVHandler implements IDataHandler {
 			
 		}
 		
-		logger.debug("一共："+teams.size()+" 只队伍");
+		logger.info("一共："+teams.size()+" 只有效队伍");
 		
 		return teams;
 	}

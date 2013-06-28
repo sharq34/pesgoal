@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-3.0.xsd
+						http://www.springframework.org/schema/tx
+						http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+	
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/pes" />
+		<property name="username" value="root" />
+		<property name="password" value="1234" />     <!-- 连接池启动时的初始值 -->
+		<property name="initialSize" value="1" />     <!-- 连接池的最大值 -->
+		<property name="maxActive" value="500" />     <!-- 最大空闲值，当经过一个高峰时间后，连接池可以慢慢将已经用不到的连接释放，一直减少到 msxIdle为止 -->
+		<property name="maxIdle" value="2" />         <!-- 最小空闲值，当空闲的连接数小于阀值时，连接池就会预申请一些连接，以免洪峰到来时来不及申 请 -->
+		<property name="minIdle" value="1" />
+	</bean>
+	
+	<bean id="pesgoalDaoImpl" class="com.edisonyang.pesgoal.dao.PesgoalDaoImpl">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<bean id="importData" class="com.edisonyang.pesgoal.data.ImportData">
+		<property name="pesgoalDaoImpl" ref="pesgoalDaoImpl"></property>
+	</bean>
+</beans>

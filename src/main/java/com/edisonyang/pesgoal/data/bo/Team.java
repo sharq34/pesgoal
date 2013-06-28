@@ -1,6 +1,6 @@
 package com.edisonyang.pesgoal.data.bo;
 
-import java.util.List;
+import java.util.Map;
 
 public class Team {
 	private int teamId;
@@ -10,7 +10,7 @@ public class Team {
 	private int stadium;
 	private byte chantsSlot;
 	private int flagSlot;
-	private List<TeamMember> member;
+	private Map<Byte,String> member;
 	private byte longFK;
 	private byte shortFK;
 	private byte FK2;
@@ -18,8 +18,7 @@ public class Team {
 	private byte cornerR;
 	private byte penalty;
 	private byte captain;
-	private boolean isClub;
-	private int leauageId;
+	private int leagueId;
 	public int getTeamId() {
 		return teamId;
 	}
@@ -56,10 +55,11 @@ public class Team {
 	public void setFlagSlot(int flagSlot) {
 		this.flagSlot = flagSlot;
 	}
-	public List<TeamMember> getMember() {
+	
+	public Map<Byte, String> getMember() {
 		return member;
 	}
-	public void setMember(List<TeamMember> member) {
+	public void setMember(Map<Byte, String> member) {
 		this.member = member;
 	}
 	public byte getLongFK() {
@@ -104,17 +104,12 @@ public class Team {
 	public void setCaptain(byte captain) {
 		this.captain = captain;
 	}
-	public boolean isClub() {
-		return isClub;
+
+	public int getLeagueId() {
+		return leagueId;
 	}
-	public void setClub(boolean isClub) {
-		this.isClub = isClub;
-	}
-	public int getLeauageId() {
-		return leauageId;
-	}
-	public void setLeauageId(int leauageId) {
-		this.leauageId = leauageId;
+	public void setLeagueId(int leagueId) {
+		this.leagueId = leagueId;
 	}
 	public String getTeamNameEN() {
 		return teamNameEN;
@@ -131,8 +126,7 @@ public class Team {
 				+ ", flagSlot=" + flagSlot + ", member=" + member + ", longFK="
 				+ longFK + ", shortFK=" + shortFK + ", FK2=" + FK2
 				+ ", cornerL=" + cornerL + ", cornerR=" + cornerR
-				+ ", penalty=" + penalty + ", captain=" + captain + ", isClub="
-				+ isClub + ", leauageId=" + leauageId + "]";
+				+ ", penalty=" + penalty + ", captain=" + captain + ", leauageId=" + leagueId + "]";
 	}
 	
 }
